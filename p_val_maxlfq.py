@@ -1,14 +1,13 @@
 import pandas as pd
 from scipy import stats
 
-# data
+# load data
 df = pd.read_csv('DIA_NN_data.csv')
 
-# p value calculation
+# function to calculate p-value
 def calculate_p_val_maxlfq(row):
-
-    bt_values = row[['Bt1_DIA', 'Bt2_DIA', 'Bt3_DIA']].dropna()
-    st_values = row[['STS1_DIA', 'STS2_DIA', 'STS3_DIA']].dropna()
+    bt_values = pd.to_numeric(row[['Bt1_DIA', 'Bt2_DIA', 'Bt3_DIA']], errors='coerce').dropna()
+    st_values = pd.to_numeric(row[['STS1_DIA', 'STS2_DIA', 'STS3_DIA']], errors='coerce').dropna()
 
     # t-test
     if len(bt_values) > 0 and len(st_values) > 0:
@@ -17,10 +16,11 @@ def calculate_p_val_maxlfq(row):
     else:
         return None
 
-# apply function to each row
+# calculate for each row
 df['p_val_maxlfq'] = df.apply(calculate_p_val_maxlfq, axis=1)
 
-# results
+# save to new file
 df.to_csv('results_with_p_val_maxlfq.tsv', sep='\t', index=False)
 
-print(df[['Protein.Names', 'p_val_maxlfq']])
+# print results
+# print(df[['Protein.Names', 'p_val_maxlfq']])
